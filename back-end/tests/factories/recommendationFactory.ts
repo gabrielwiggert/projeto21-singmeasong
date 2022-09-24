@@ -1,9 +1,8 @@
-import { faker } from "@faker-js/faker";
 import { CreateRecommendationData } from "../../src/services/recommendationsService";
 
 export default function recommendationFactory(): CreateRecommendationData {
   return {
-    name: faker.lorem.words(4),
-    youtubeLink: "https://www.youtube.com/watch?v=chwyjJbcs1Y"
+    name: "Electric Callboy - Hypa Hypa",
+    youtubeLink: "https://www.youtube.com/watch?v=75Mw8r5gW8E"
   };
 }
