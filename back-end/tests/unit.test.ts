@@ -126,7 +126,7 @@ describe('Tests upvote and downvote functions', () => {
 
         jest
             .spyOn(recommendationRepository, 'remove')
-            .mockImplementationOnce((): any => {});
+            .mockImplementationOnce((): any => { });
 
 
         await recommendationService.downvote(1);
@@ -157,12 +157,83 @@ describe('Tests upvote and downvote functions', () => {
 
         jest
             .spyOn(recommendationRepository, 'remove')
-            .mockImplementationOnce((): any => {});
+            .mockImplementationOnce((): any => { });
 
 
         await recommendationService.downvote(1);
 
         expect(recommendationRepository.updateScore).toBeCalled();
         expect(recommendationRepository.remove).toBeCalled();
+    });
+});
+
+describe('Tests get function', () => {
+    it('Should call function', async () => {
+        jest
+            .spyOn(recommendationRepository, 'findAll')
+            .mockImplementationOnce((): any => { });
+
+        await recommendationService.get();
+
+        expect(recommendationRepository.findAll).toBeCalled();
+    });
+});
+
+describe('Tests getTop function', () => {
+    it('Should call function', async () => {
+        jest
+            .spyOn(recommendationRepository, 'getAmountByScore')
+            .mockImplementationOnce((): any => { });
+
+        await recommendationService.getTop(3);
+
+        expect(recommendationRepository.getAmountByScore).toBeCalled();
+    });
+});
+
+describe('Tests getRandom function', () => {
+    it('Should call function', async () => {
+        jest
+            .spyOn(recommendationService, 'getByScore')
+            .mockImplementationOnce((): any => {
+                return [1, 2, 3];
+            });
+
+        jest
+            .spyOn(recommendationService, 'getScoreFilter')
+            .mockImplementationOnce((): any => { });
+
+        await recommendationService.getRandom();
+
+        expect(recommendationService.getByScore).toBeCalled();
+        expect(recommendationService.getScoreFilter).toBeCalled();
+    });
+    it('Should throw notFoundError if array length is 0', async () => {
+        const emptyArray = [];
+
+        jest
+            .spyOn(recommendationService, 'getByScore')
+            .mockImplementationOnce((): any => {
+                return emptyArray;
+            });
+
+        jest
+            .spyOn(recommendationRepository, 'findAll')
+            .mockImplementationOnce((): any => {
+                return emptyArray;
+            });
+
+        jest
+            .spyOn(recommendationService, 'getScoreFilter')
+            .mockImplementationOnce((): any => { });
+
+        const promise = await recommendationService.getRandom();
+
+        expect(recommendationService.getByScore).toBeCalled();
+        expect(recommendationService.getScoreFilter).toBeCalled();
+        expect(promise).rejects.toEqual({
+            type: 'not_found',
+            message: ""
+        });
     });
 });
