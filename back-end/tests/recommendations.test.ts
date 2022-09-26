@@ -81,7 +81,7 @@ describe('Tests GET /recommendations', () => {
 
     const result = await agent.get('/recommendations');
 
-    expect(result.text.length).toBeGreaterThanOrEqual(10);
+    expect(result.body.length).toBeGreaterThanOrEqual(10);
   });
 });
 
@@ -117,5 +117,17 @@ describe('Tests GET /recommendations/random', () => {
     const result = await agent.get('/recommendations/random');
 
     expect(result.status).toBe(404);
+  });
+});
+
+describe('Tests GET /recommendations/top/:amount', () => {
+  it('Should return an array containing a given number of recommendations', async () => {
+    await insertRecommendation(1);
+    await insertRecommendation(2);
+    await insertRecommendation(3);
+    await insertRecommendation(4);
+    const result = await agent.get('/recommendations/top/4');
+
+    expect(result.body).toHaveLength(4);
   });
 });
