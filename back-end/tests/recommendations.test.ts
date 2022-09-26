@@ -96,3 +96,26 @@ describe('Tests GET /recommendations/:id', () => {
     expect(result.body).toBeInstanceOf(Object);
   });
 });
+
+describe('Tests GET /recommendations/random', () => {
+  it('Should return an object containing a random recommendation', async () => {
+    await insertRecommendation(20);
+    const result = await agent.get('/recommendations/random');
+
+    expect(result.body).toBeInstanceOf(Object);
+  });
+
+  it('Should return an object containing a random recommendation with a score greater than -5', async () => {
+    await insertRecommendation(20);
+    const result = await agent.get('/recommendations/random');
+
+    expect(result.body.score).toBeGreaterThan(-6);
+  });
+
+  it('Should return status code 404 when there is no recommendations', async () => {
+    await prisma.$executeRaw`TRUNCATE TABLE recommendations`;
+    const result = await agent.get('/recommendations/random');
+
+    expect(result.status).toBe(404);
+  });
+});
