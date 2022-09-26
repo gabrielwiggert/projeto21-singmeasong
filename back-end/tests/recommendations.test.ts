@@ -84,3 +84,15 @@ describe('Tests GET /recommendations', () => {
     expect(result.text.length).toBeGreaterThanOrEqual(10);
   });
 });
+
+describe('Tests GET /recommendations/:id', () => {
+  it('Should return an object containing the recommendation with the given id', async () => {
+    await insertRecommendation(20);
+    const getId = await recommendationRepository.findByName('Electric Callboy - Hypa Hypa 20');
+    const id = getId.id;
+
+    const result = await agent.get(`/recommendations/${id}`);
+
+    expect(result.body).toBeInstanceOf(Object);
+  });
+});
