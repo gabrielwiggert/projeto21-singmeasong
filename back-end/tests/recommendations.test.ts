@@ -130,4 +130,24 @@ describe('Tests GET /recommendations/top/:amount', () => {
 
     expect(result.body).toHaveLength(4);
   });
+
+  it('Should return an array containing a given number of recommendations ordered by score', async () => {
+    await insertRecommendation(1);
+    const getId = await recommendationRepository.findByName('Electric Callboy - Hypa Hypa 1');
+    const id = getId.id;
+    await agent.post(`/recommendations/${id}/upvote`);
+
+    await insertRecommendation(2);
+
+    await insertRecommendation(3);
+    const getId2 = await recommendationRepository.findByName('Electric Callboy - Hypa Hypa 3');
+    const id2 = getId2.id;
+    await agent.post(`/recommendations/${id2}/downvote`);
+
+    const result = await agent.get('/recommendations/top/3');
+
+    expect(result.body[0].name).toEqual("Electric Callboy - Hypa Hypa 1");
+    expect(result.body[1].name).toEqual("Electric Callboy - Hypa Hypa 2");
+    expect(result.body[2].name).toEqual("Electric Callboy - Hypa Hypa 3");
+  });
 });
