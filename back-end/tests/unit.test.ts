@@ -46,3 +46,34 @@ describe('Tests insert function', () => {
     expect(recommendationRepository.create).not.toBeCalled();
   });
 });
+
+describe('Tests getByIdOrFail function', () => {
+    it('Should return a recommendation with the given id', async () => {
+      const recommendation = await recommendationFactory(1);
+  
+      jest
+      .spyOn(recommendationRepository, 'find')
+      .mockImplementationOnce((id): any => {
+        return recommendation;
+      });
+
+      const promise = recommendationService.getById(1);
+
+      expect(promise).toBeInstanceOf(Object);
+    });
+
+    it('Should throw notFoundError if an unexisting id is searched', async () => {
+        jest
+        .spyOn(recommendationRepository, 'find')
+        .mockImplementationOnce((id): any => {
+          return null;
+        });
+    
+        const promise = recommendationService.getById(1);
+    
+        expect(promise).rejects.toEqual({
+          type: 'not_found',
+          message: ""
+        });
+      });
+  });
