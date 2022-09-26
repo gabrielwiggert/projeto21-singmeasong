@@ -72,3 +72,15 @@ describe('Tests POST /recommendations/:id/downvote', () => {
     expect((await result)).toBeNull();
   });
 });
+
+describe('Tests GET /recommendations', () => {
+  it('Should return an array with the latest 10 recommendations', async () => {
+    for (let i = 5; i < 15; i++) {
+      await insertRecommendation(i);
+    }
+
+    const result = await agent.get('/recommendations');
+
+    expect(result.text.length).toBeGreaterThanOrEqual(10);
+  });
+});
